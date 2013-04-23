@@ -534,7 +534,6 @@ int main(int argc, char **argv)
 
     if(global.module_hacks->handle_update) goto finish;
 
-    int emulate_multitouch = 0;
     const int emulate_finger_id = 2;
 
     while (1) {
@@ -553,7 +552,6 @@ int main(int argc, char **argv)
                     goto finish;
                 }
                 else if (e.key.keysym.sym==SDLK_RSHIFT) {
-                    //emulate_multitouch = 1;
                     module->input(module,ACTION_DOWN, platform_getscreenwidth()>>1, platform_getscreenheight()>>1,emulate_finger_id);
                 }
                 else
@@ -563,7 +561,6 @@ int main(int argc, char **argv)
             else if (e.type == SDL_KEYUP) {
 #ifdef PANDORA
                 if (e.key.keysym.sym==SDLK_RSHIFT) {
-                    //emulate_multitouch = 0;
                     module->input(module,ACTION_UP, platform_getscreenwidth()>>1, platform_getscreenheight()>>1,emulate_finger_id);
                 }
                 else
@@ -571,19 +568,10 @@ int main(int argc, char **argv)
                 module->key_input(module, ACTION_UP, keymap[e.key.keysym.sym], e.key.keysym.unicode);
             } else if (e.type == SDL_MOUSEBUTTONDOWN) {
                 module->input(module, ACTION_DOWN, e.button.x, e.button.y, e.button.which);
-                if (emulate_multitouch) {
-                    module->input(module,ACTION_DOWN, platform_getscreenwidth()-e.button.x, platform_getscreenheight()-e.button.y,emulate_finger_id);
-                }
             } else if (e.type == SDL_MOUSEBUTTONUP) {
                 module->input(module, ACTION_UP, e.button.x, e.button.y, e.button.which);
-                if (emulate_multitouch) {
-                    module->input(module,ACTION_UP, platform_getscreenwidth()-e.button.x, platform_getscreenheight()-e.button.y,emulate_finger_id);
-                }
             } else if (e.type == SDL_MOUSEMOTION) {
                 module->input(module, ACTION_MOVE, e.motion.x, e.motion.y, e.motion.which);
-                if (emulate_multitouch) {
-                    module->input(module,ACTION_MOVE, platform_getscreenwidth()-e.button.x, platform_getscreenheight()-e.button.y,emulate_finger_id);
-                }
             } else if (e.type == SDL_QUIT) {
                 module->deinit(module);
                 goto finish;
@@ -618,6 +606,7 @@ finish:
             free(*tmp++);
         }
         free(lib->method_table);
+        unlink(lib->name); //unlink on exit, cleans the mess we've caused
         struct JniLibrary *next = lib->next;
         free(lib);
         lib = next;
