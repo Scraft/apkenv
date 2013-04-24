@@ -405,7 +405,7 @@ system_exit()
 
 int main(int argc, char **argv)
 {
-    //debug_init();
+    debug_init();
 
     char **tmp;
 
@@ -417,7 +417,6 @@ int main(int argc, char **argv)
 
     printf("%s\n%s\n\n", global.apkenv_headline, global.apkenv_copyright);
 
-#ifndef APKENV_DEBUG
     switch (argc) {
         case 2:
             /* One argument - the .apk (continue below) */
@@ -430,7 +429,6 @@ int main(int argc, char **argv)
             /* Wrong number of arguments */
             usage();
     }
-#endif
 
     memset(&global_module_hacks,0,sizeof(global_module_hacks));
 
