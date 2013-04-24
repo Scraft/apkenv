@@ -224,10 +224,19 @@ apk_get_res_string(const void *str, int is_utf8)
     uint32_t i;
     char *out;
 
-    memcpy(&len, str, sizeof(len));
+    if (str == NULL)
+        return "";
+
+ // crow_riot:
+ // the documentation is definitely wrong here - on all apk's i've came accross the first *byte* is the string size
+ // and not a whole word.
+ // memcpy(&len, str, sizeof(len));
+
+    len = *(uint8_t*)str;
+
     out = malloc(len + 1);
     if (out == NULL)
-        return NULL;
+        return "";
 
     if (is_utf8) {
         memcpy(out, (const char *)str + 2, len);
@@ -236,7 +245,9 @@ apk_get_res_string(const void *str, int is_utf8)
         for (i = 0; i < len; i++)
             out[i] = str16[i];
     }
+
     out[len] = 0;
+
     return out;
 }
 
@@ -266,8 +277,8 @@ apk_read_resources(AndroidApk *apk, struct ResourceStrings *rstrings)
     }
 
     rstrings->count = rstr_i = 0;
-    rstrings->app_name = NULL;
-    rstrings->game_name = NULL;
+    rstrings->app_name_index = -1;
+    rstrings->game_name_index = -1;
     rstr_alloc = 32;
     rstrings->entries = malloc(rstr_alloc * sizeof(rstrings->entries[0]));
     if (rstrings->entries == NULL) {
@@ -295,6 +306,7 @@ apk_read_resources(AndroidApk *apk, struct ResourceStrings *rstrings)
     key_index = (int *)(p + key_pool->header.headerSize);
     keys = p + key_pool->stringsStart;
     p += key_pool->header.size;
+
 
     /* handle all ResTable chunks */
     for (; p < buf + size; p += chunk->size) {
@@ -328,14 +340,16 @@ apk_read_resources(AndroidApk *apk, struct ResourceStrings *rstrings)
                     value->data, value_pool->stringCount);
                 break;
             }
+
             rstrings->entries[rstr_i].key = apk_get_res_string(
                 keys + key_index[entry->key.index], key_pool->flags & UTF8_FLAG);
             rstrings->entries[rstr_i].value = apk_get_res_string(
                 values + value_index[value->data], value_pool->flags & UTF8_FLAG);
-            if (rstrings->app_name==0 && strcmp(rstrings->entries[rstr_i].key, "app_name") == 0)
-                rstrings->app_name = rstrings->entries[rstr_i].value;
-            if (rstrings->game_name==0 && strcmp(rstrings->entries[rstr_i].key, "game_name") == 0)
-                rstrings->game_name = rstrings->entries[rstr_i].value;
+
+            if (rstrings->app_name_index<0 && strcmp(rstrings->entries[rstr_i].key, "app_name") == 0)
+                rstrings->app_name_index = rstr_i;
+            if (rstrings->game_name_index<0 && strcmp(rstrings->entries[rstr_i].key, "game_name") == 0)
+                rstrings->game_name_index = rstr_i;
 
             rstr_i++;
             if (rstr_i >= rstr_alloc) {

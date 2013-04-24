@@ -114,8 +114,19 @@ lookup_resource_impl(const char *key)
 {
     size_t i;
 
-    if (strcmp(key, "app_name") == 0)
-        return global.resource_strings.app_name;
+    if (strcmp(key, "app_name") == 0) {
+        if (global.resource_strings.app_name_index<0) {
+            return "";
+        }
+        return global.resource_strings.entries[global.resource_strings.app_name_index].value;
+    }
+
+    if (strcmp(key, "game_name") == 0) {
+        if (global.resource_strings.game_name_index<0) {
+            return "";
+        }
+        return global.resource_strings.entries[global.resource_strings.game_name_index].value;
+    }
 
     for (i = 0; i < global.resource_strings.count; i++)
         if (strcmp(key, global.resource_strings.entries[i].key) == 0)
@@ -362,7 +373,9 @@ system_init()
         return 0;
     }
 
+#ifdef APKENV_GLES
     gles_extensions_init();
+#endif
 
     SDL_ShowCursor(0);
 
@@ -392,7 +405,7 @@ system_exit()
 
 int main(int argc, char **argv)
 {
-    debug_init();
+    //debug_init();
 
     char **tmp;
 
@@ -404,6 +417,7 @@ int main(int argc, char **argv)
 
     printf("%s\n%s\n\n", global.apkenv_headline, global.apkenv_copyright);
 
+#ifndef APKENV_DEBUG
     switch (argc) {
         case 2:
             /* One argument - the .apk (continue below) */
@@ -416,6 +430,7 @@ int main(int argc, char **argv)
             /* Wrong number of arguments */
             usage();
     }
+#endif
 
     memset(&global_module_hacks,0,sizeof(global_module_hacks));
 
