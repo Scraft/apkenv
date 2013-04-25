@@ -50,7 +50,7 @@ endif
 OBJS = $(patsubst %.c,%.o,$(SOURCES))
 MODULES = $(patsubst modules/%.c,%.apkenv.so,$(MODULES_SOURCES))
 
-LDFLAGS = -fPIC -ldl -lz -lSDL -lSDL_mixer -pthread -lpng -ljpeg
+LDFLAGS += -fPIC -ldl -lz -lSDL -lSDL_mixer -lpthread -lpng -ljpeg
 
 ifeq ($(PANDORA),1)
 CFLAGS += -DPANDORA
