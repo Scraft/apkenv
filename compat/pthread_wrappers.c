@@ -30,7 +30,7 @@
  **/
 
 #include "pthread_wrappers.h"
-
+#include <sys/time.h>
 
 /**
  * This will take care of doing the right thing for mutexes that are not
@@ -283,35 +283,119 @@ my_pthread_getattr_np(pthread_t __th, pthread_attr_t *__attr)
 void
 my_pthread_cleanup_pop(int execute)
 {
-    printf("UNIMPLEMENTED: pthread_cleanup_pop\n");
+	printf("UNIMPLEMENTED: pthread_cleanup_pop\n");
+	exit(1);
 }
 void
 my_pthread_cleanup_push(void (*routine) (void *), void *arg)
 {
-    printf("UNIMPLEMENTED: pthread_cleanup_push\n");
+	printf("UNIMPLEMENTED: pthread_cleanup_push\n");
+	exit(1);
 
+}
+
+// Android specific, passes relative time, we need to convert to absolute time then call the non *_np version.
+int       
+my_pthread_cond_timedwait_relative_np(pthread_cond_t *__cond, 
+									  pthread_mutex_t *__mutex,
+									  const struct timespec *relative_time)
+{
+	pthread_cond_t *realcond = late_init_pthread_cond(__cond);
+	pthread_mutex_t *realmutex = late_init_pthread_mutex(__mutex);
+
+	struct timespec now;
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	TIMEVAL_TO_TIMESPEC(&tv, &now);
+
+	now.tv_sec	+= relative_time->tv_sec;
+	now.tv_nsec	+= relative_time->tv_nsec;
+
+
+	return (pthread_cond_timedwait(realcond, realmutex, &now));
+}
+
+int 
+my_pthread_condattr_init(pthread_condattr_t *attr)
+{
+	printf("UNIMPLEMENTED: my_pthread_condattr_init\n");
+	exit(1);
+	return 0;
+}
+
+int 
+my_pthread_condattr_setpshared(pthread_condattr_t *attr, int pshared)
+{
+	printf("UNIMPLEMENTED: my_pthread_condattr_setpshared\n");
+	exit(1);
+	return 0;
+} 
+
+int 
+my_pthread_condattr_destroy(pthread_condattr_t *attr)
+{
+	printf("UNIMPLEMENTED: my_pthread_condattr_destroy\n");
+	exit(1);
+	return 0;
+}
+
+int 
+my_pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared)
+{
+	printf("UNIMPLEMENTED: my_pthread_mutexattr_setpshared\n");
+	exit(1);
+	return 0;
+}
+
+int 
+my_pthread_create(pthread_t *thread, const pthread_attr_t *__attr, void *(*start_routine)(void*), void *arg)
+{
+	assert(__attr != NULL);
+	pthread_attr_t *realattr = (pthread_attr_t *) *(int *) __attr;
+	assert(realattr != NULL);
+
+	int result = pthread_create( thread, realattr, start_routine, arg );
+
+	if ( result != 0 )
+	{
+		printf( "my_pthread_create failed to create thread (return : %d)\n", result );
+	}
+
+	return result;
+}
+
+int 
+my_pthread_key_create(pthread_key_t *key, void (*destructor)(void*))
+{
+	assert(key != NULL);
+	pthread_key_t *realkey = malloc(sizeof(pthread_key_t));
+	*((int *) key) = (int) realkey;
+	return pthread_key_create(realkey, destructor);
 }
 
 void *
-start_wrapped_thread(void *arg)
+my_pthread_getspecific(pthread_key_t __key)
 {
-    struct WrappedThread *wrapped = arg;
-    //printf("XXX THREAD START XXX\n");
-    void *result = wrapped->start_routine(wrapped->arg);
-    //printf("XXX THREAD END XXX\n");
-    free(wrapped);
-    return result;
+	assert(__key != 0);
+	pthread_key_t *realkey = (pthread_key_t *) __key;
+	assert(realkey != NULL);
+	return pthread_getspecific( *realkey );
 }
 
-int my_pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-        void *(*start_routine)(void*), void *arg)
+int 
+my_pthread_setspecific(pthread_key_t __key, const void *value)
 {
-    struct WrappedThread *wrapped = malloc(
-            sizeof(struct WrappedThread));
-    wrapped->start_routine = start_routine;
-    wrapped->arg = arg;
-
-    //printf("XXX PTHREAD CREATE XXX\n");
-    return pthread_create(thread, attr, start_wrapped_thread, (void*)wrapped);
+	assert(__key != 0);
+	pthread_key_t *realkey = (pthread_key_t *) __key;
+	assert(realkey != NULL);
+	return pthread_setspecific( *realkey, value );
 }
 
+int 
+my_pthread_key_delete(pthread_key_t __key)
+{
+	assert(__key != 0);
+	pthread_key_t *realkey = (pthread_key_t *) __key;
+	assert(realkey != NULL);
+	return pthread_key_delete( *realkey );
+}

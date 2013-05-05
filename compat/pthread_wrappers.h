@@ -39,6 +39,8 @@
 /* pthread_mutexattr_t: union{char[4],int} in glibc, long in Bionic */
 /* pthread_condattr_t: union{char[4],int} in glibc, long in Bionic */
 
+/* pthread_key_t: sizeof == 4 in glibc, sizeof == 4 (int) in Bionic */
+
 /* pthread_mutex_t: big struct in glibc, struct{int} in Bionic -> wrap */
 /* pthread_cond_t: big struct in glibc, struct{int} in Bionic -> wrap */
 /* pthread_attr_t: big struct in glibc, small struct in Bionic -> wrap */
@@ -104,15 +106,34 @@ my_pthread_cleanup_pop(int execute);
 void
 my_pthread_cleanup_push(void (*routine) (void *), void *arg);
 
+int       
+my_pthread_cond_timedwait_relative_np(pthread_cond_t *cond, 
+								   pthread_mutex_t *mutex,
+								   const struct timespec *abstime);
 
-struct WrappedThread {
-    void *(*start_routine)(void *);
-    void *arg;
-};
+int 
+my_pthread_condattr_init(pthread_condattr_t *attr);
+
+int 
+my_pthread_condattr_setpshared(pthread_condattr_t *attr, int pshared); 
+
+int 
+my_pthread_condattr_destroy(pthread_condattr_t *attr);
+
+int 
+my_pthread_mutexattr_setpshared(pthread_mutexattr_t *attr, int pshared); 
+
+int 
+my_pthread_create(pthread_t *thread, const pthread_attr_t *attr, void *(*start_routine)(void*), void *arg);
+
+int 
+my_pthread_key_create(pthread_key_t *key, void (*destructor)(void*));
 
 void *
-start_wrapped_thread(void *arg);
-int
-my_pthread_create(pthread_t *thread, const pthread_attr_t *attr,
-        void *(*start_routine)(void*), void *arg);
+my_pthread_getspecific(pthread_key_t key);
 
+int 
+my_pthread_setspecific(pthread_key_t key, const void *value);
+
+int 
+my_pthread_key_delete(pthread_key_t key);

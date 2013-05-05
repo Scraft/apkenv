@@ -16,7 +16,7 @@
 {"pthread_cond_wait", my_pthread_cond_wait},
 {"pthread_cond_destroy", my_pthread_cond_destroy},
 
-{"pthread_create", pthread_create},
+{"pthread_create", my_pthread_create},
 {"pthread_self", pthread_self},
 {"pthread_equal", pthread_equal},
 {"pthread_getschedparam", pthread_getschedparam},
@@ -54,3 +54,9 @@
 
 {"__pthread_cleanup_pop",my_pthread_cleanup_pop},
 {"__pthread_cleanup_push",my_pthread_cleanup_push},
+{"pthread_cond_timedwait_relative_np", my_pthread_cond_timedwait_relative_np},
+{"pthread_condattr_init", my_pthread_condattr_init},
+{"pthread_condattr_setpshared", my_pthread_condattr_setpshared},
+{"pthread_condattr_destroy", my_pthread_condattr_destroy},
+{"pthread_mutexattr_setpshared", my_pthread_mutexattr_setpshared},
+
