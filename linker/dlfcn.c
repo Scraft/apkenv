@@ -108,7 +108,7 @@ void *android_dlsym(void *handle, const char *symbol)
     void *sym_addr;
     if(0 != (sym_addr = get_hooked_symbol(symbol)))
     {
-        LINKER_DEBUG_PRINTF("symbol %s hooked to %x\n",symbol,sym_addr);
+        LINKER_DEBUG_PRINTF("symbol %s hooked to %p\n",symbol,sym_addr);
         pthread_mutex_unlock(&dl_lock);
         return sym_addr;
     }
