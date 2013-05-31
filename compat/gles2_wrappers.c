@@ -168,7 +168,27 @@ my_glCreateProgram()
 GLuint
 my_glCreateShader(GLenum type)
 {
-    WRAPPERS_DEBUG_PRINTF("glCreateShader(%d)\n", type);
+	/*
+		GL_FRAGMENT_SHADER	= 0x8B30
+		GL_VERTEX_SHADER	= 0x8B31
+	*/
+	switch ( type )
+	{
+		case 0x8B30:
+		{
+			WRAPPERS_DEBUG_PRINTF("glCreateShader( GL_FRAGMENT_SHADER )\n" );
+		}
+		break;
+		case 0x8B31:
+		{
+			WRAPPERS_DEBUG_PRINTF("glCreateShader( GL_VERTEX_SHADER )\n" );
+		}
+		break;
+		default:
+		{
+			WRAPPERS_DEBUG_PRINTF("glCreateShader(%d)\n", type);
+		}
+	}
     return glCreateShader(type);
 }
 void
@@ -420,8 +440,12 @@ my_glGetShaderiv(GLuint shader, GLenum pname, GLint *params)
 void
 my_glGetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei *length, char *infolog)
 {
-    WRAPPERS_DEBUG_PRINTF("glGetShaderInfoLog(%u, %u, %p, %s)\n", shader, bufsize, length, infolog);
-    glGetShaderInfoLog(shader, bufsize, length, infolog);
+    WRAPPERS_DEBUG_PRINTF("glGetShaderInfoLog(%u, %u, %p, %p)\n", shader, bufsize, length, infolog);
+	glGetShaderInfoLog(shader, bufsize, length, infolog);
+	if ( length && *length != 0 )
+	{
+		WRAPPERS_DEBUG_PRINTF(" - Failed to compile! %s\n", infolog);
+	}
 }
 void
 my_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint *range, GLint *precision)
