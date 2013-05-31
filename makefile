@@ -50,18 +50,22 @@ endif
 OBJS = $(patsubst %.c,%.o,$(SOURCES))
 MODULES = $(patsubst modules/%.c,%.apkenv.so,$(MODULES_SOURCES))
 
-LDFLAGS += -fPIC -ldl -lz -lSDL -lSDL_mixer -lpthread -lpng -ljpeg
+LDFLAGS += -fPIC -ldl -lz -lSDL -lSDL_mixer -lpthread -lpng -ljpeg 
 
 ifeq ($(PANDORA),1)
 CFLAGS += -DPANDORA
 LDFLAGS += -lrt
 endif
 
+ifeq ($(STACKTEST),1)
+LDFLAGS += --Wl,--stack=16777216 -fstack-check -fstack-protector
+endif
+
 # Selection of OpenGL ES version support (if any) to include
 GLES ?= 1
 ifeq ($(GLES),2)
     CFLAGS += -DAPKENV_GLES2
-    LDFLAGS += -lGLESv2
+    LDFLAGS += -lGLESv2 -lEGL
 else
     CFLAGS += -DAPKENV_GLES
     LDFLAGS += -lGLES_CM
@@ -75,7 +79,7 @@ endif
 
 DEBUG ?= 0
 ifeq ($(DEBUG),1)
-    CFLAGS += -g -Wall -DLINKER_DEBUG=1 -DAPKENV_DEBUG -Wformat=0
+    CFLAGS += -g -Wall -DLINKER_DEBUG=1 -DAPKENV_DEBUG -Wformat=1 -Wmissing-format-attribute -fstack-check -fstack-protector
 else
     CFLAGS += -O2 -DLINKER_DEBUG=0
 endif

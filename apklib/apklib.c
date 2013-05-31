@@ -217,11 +217,12 @@ apk_for_each_file(AndroidApk *apk, const char *prefix,
 }
 
 static char *
-apk_get_res_string(const void *str, int is_utf8)
+apk_get_res_string(const char *str, int is_utf8)
 {
     const uint16_t *str16;
-    uint16_t len;
+    uint16_t len16;
     uint32_t i;
+    int len;
     char *out;
 
     if (str == NULL)
@@ -239,9 +240,9 @@ apk_get_res_string(const void *str, int is_utf8)
         return "";
 
     if (is_utf8) {
-        memcpy(out, (const char *)str + 2, len);
+        memcpy(out, str, len);
     } else {
-        str16 = (const uint16_t *)str + 1;
+        str16 = (const uint16_t *)str;
         for (i = 0; i < len; i++)
             out[i] = str16[i];
     }

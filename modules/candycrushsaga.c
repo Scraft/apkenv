@@ -143,18 +143,29 @@ candycrashsaga_JNIEnv_CallStaticIntMethodV(JNIEnv* p0, jclass p1, jmethodID p2, 
 						strcat( filenameFixed, "assets/");
 						strcat( filenameFixed, filenamePtr->data );
 
-						r = global->read_file(filenameFixed, &candycrushsaga_filehandles[ ix ].data, &candycrushsaga_filehandles[ ix ].size);
-
-						global->fake_env.ReleaseStringUTFChars(p0, filenamePtr, filenamePtr->data );
+						char * b = NULL;
+						r = global->read_file(filenameFixed, &b, &candycrushsaga_filehandles[ ix ].size);
 
 						if ( r == 1 )
 						{
+							candycrushsaga_filehandles[ ix ].data = malloc( candycrushsaga_filehandles[ ix ].size + 1 );
+							memcpy( candycrushsaga_filehandles[ ix ].data, b, candycrushsaga_filehandles[ ix ].size );
+							candycrushsaga_filehandles[ ix ].data[ candycrushsaga_filehandles[ ix ].size ] = '\0';
+
+							if ( b )
+								free( b );
+
 							candycrushsaga_filehandles[ ix ].offset = 0;
 							candycrushsaga_filehandles[ ix ].in_use = 1;
 							return ix + 1;
 						}
 						else
+						{
+							if ( b )
+								free( b );
+
 							return 0;
+						}
 					}
 				}
 			}

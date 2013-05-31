@@ -60,9 +60,12 @@ JNIEnv_DefineClass(JNIEnv* p0, const char* p1, jobject p2, const jbyte* p3, jsiz
 jclass
 JNIEnv_FindClass(JNIEnv* p0, const char* p1)
 {
+	//char buffer[ 512 ];
+	//sprintf( buffer, "Value : %3.2f\n", "5.5" );
     JNIENV_DEBUG_PRINTF("JNIEnv_FindClass('%s')\n", p1);
     struct dummy_jclass *class = malloc(sizeof(struct dummy_jclass));
-    class->name = strdup(p1);
+	class->name = strdup(p1);
+	//printf( "Value : %3.2f\n", strtod( "5.5", 0 ) );
     return class;
 }
 
@@ -179,7 +182,8 @@ JNIEnv_PopLocalFrame(JNIEnv* p0, jobject p1)
 jobject
 JNIEnv_NewGlobalRef(JNIEnv* p0, jobject p1)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_NewGlobalRef(%x)\n", p1);
+	//printf( "Value : %3.2f\n", strtod( "5.5", 0 ) );
+    JNIENV_DEBUG_PRINTF("JNIEnv_NewGlobalRef(%p)\n", p1);
     return p1;
 }
 
@@ -194,7 +198,7 @@ JNIEnv_DeleteGlobalRef(JNIEnv* p0, jobject p1)
 void
 JNIEnv_DeleteLocalRef(JNIEnv* p0, jobject p1)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_DeleteLocalRef(%x)\n", p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_DeleteLocalRef(%p)\n", p1);
 }
 
 
@@ -233,7 +237,7 @@ JNIEnv_AllocObject(JNIEnv* p0, jclass p1)
 jobject
 JNIEnv_NewObject(JNIEnv* p0, jclass p1, jmethodID p2, ...)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_NewObject(%x, %s)\n", p1, p2->name);
+    JNIENV_DEBUG_PRINTF("JNIEnv_NewObject(%p, %s)\n", p1, p2->name);
     return NULL;
 }
 
@@ -241,7 +245,7 @@ JNIEnv_NewObject(JNIEnv* p0, jclass p1, jmethodID p2, ...)
 jobject
 JNIEnv_NewObjectV(JNIEnv *env, jclass p1, jmethodID p2, va_list p3)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_NewObjectV(%x, %s)\n", p1, p2->name);
+    JNIENV_DEBUG_PRINTF("JNIEnv_NewObjectV(%p, %s)\n", p1, p2->name);
     return GLOBAL_J(env);
 }
 
@@ -257,7 +261,7 @@ JNIEnv_NewObjectA(JNIEnv* p0, jclass p1, jmethodID p2, jvalue* p3)
 jclass
 JNIEnv_GetObjectClass(JNIEnv* env, jobject p1)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetObjectClass(%x, %x)\n", env, p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetObjectClass(%p, %p)\n", env, p1);
     return GLOBAL_J(env);
 }
 
@@ -282,7 +286,7 @@ jnienv_make_method(jclass clazz, const char *name, const char *sig)
 jmethodID
 JNIEnv_GetMethodID(JNIEnv* p0, jclass clazz, const char* name, const char* sig)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetMethodID(%x, '%s', '%s')\n", clazz, name, sig);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetMethodID(%p, '%s', '%s')\n", clazz, name, sig);
     return jnienv_make_method(clazz, name, sig);
 }
 
@@ -298,7 +302,7 @@ JNIEnv_CallObjectMethod(JNIEnv* p0, jobject p1, jmethodID p2, ...)
 jobject
 JNIEnv_CallObjectMethodV(JNIEnv *env, jobject p1, jmethodID p2, va_list p3)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_CallObjectMethodV(%x, %s, %s, ...)\n", p1, p2->name, p2->sig);
+    JNIENV_DEBUG_PRINTF("JNIEnv_CallObjectMethodV(%p, %s, %s, ...)\n", p1, p2->name, p2->sig);
     return GLOBAL_J(env);
 }
 
@@ -506,14 +510,14 @@ JNIEnv_CallDoubleMethodA(JNIEnv* p0, jobject p1, jmethodID p2, jvalue* p3)
 void
 JNIEnv_CallVoidMethod(JNIEnv* p0, jobject p1, jmethodID p2, ...)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_CallVoidMethod(%x)\n", p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_CallVoidMethod(%p)\n", p1);
 }
 
 
 void
 JNIEnv_CallVoidMethodV(JNIEnv* p0, jobject p1, jmethodID p2, va_list p3)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_CallVoidMethodV(%x, %s, %s)\n", p1, p2->name, p2->sig);
+    JNIENV_DEBUG_PRINTF("JNIEnv_CallVoidMethodV(%p, %s, %s)\n", p1, p2->name, p2->sig);
 }
 
 
@@ -907,7 +911,8 @@ JNIEnv_SetDoubleField(JNIEnv* p0, jobject p1, jfieldID p2, jdouble p3)
 jmethodID
 JNIEnv_GetStaticMethodID(JNIEnv* p0, jclass clazz, const char* name, const char* sig)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetStaticMethodID(%x, %s, %s)\n",
+	//printf( "Value : %3.2f\n", strtod( "5.5", 0 ) );
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetStaticMethodID(%p, %s, %s)\n",
             clazz, name, sig);
     return jnienv_make_method(clazz, name, sig);
 }
@@ -1298,7 +1303,7 @@ JNIEnv_SetStaticDoubleField(JNIEnv* p0, jclass p1, jfieldID p2, jdouble p3)
 jstring
 JNIEnv_NewString(JNIEnv* p0, const jchar* p1, jsize p2)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_NewString(%s, %d)\n", p1, p2);
+    JNIENV_DEBUG_PRINTF("JNIEnv_NewString(%s, %u)\n", p1, p2);
     char *str = malloc(p2+1);
     int i;
     for (i=0; i<p2; i++) {
@@ -1338,9 +1343,11 @@ JNIEnv_ReleaseStringChars(JNIEnv* p0, jstring p1, const jchar* p2)
 jstring
 JNIEnv_NewStringUTF(JNIEnv* p0, const char* p1)
 {
+	//printf( "Value : %3.2f\n", strtod( "5.5", 0 ) );
     struct dummy_jstring *result = malloc(sizeof(struct dummy_jstring));
-    JNIENV_DEBUG_PRINTF("JNIEnv_NewStringUTF('%s') -> %x\n", p1, result);
-    result->data = strdup(p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_NewStringUTF('%s') -> %p\n", p1, result);
+	result->data = strdup(p1);
+	//printf( "Value : %3.2f\n", strtod( "5.5", 0 ) );
     return result;
 }
 
@@ -1357,10 +1364,10 @@ JNIEnv_GetStringUTFLength(JNIEnv* p0, jstring p1)
 jsize
 JNIEnv_GetArrayLength(JNIEnv* env, jarray p1)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetArrayLength(%x)\n", p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetArrayLength(%p)\n", p1);
     if (p1 != GLOBAL_J(env)) {
         struct dummy_byte_array *array = p1;
-        JNIENV_DEBUG_PRINTF("JNIEnv_GetArrayLength(%x) -> %d\n", p1, array->size);
+        JNIENV_DEBUG_PRINTF("JNIEnv_GetArrayLength(%p) -> %ld\n", p1, array->size);
         return array->size;
     }
     return 0;
@@ -1465,7 +1472,7 @@ JNIEnv_GetBooleanArrayElements(JNIEnv* p0, jbooleanArray p1, jboolean* p2)
 jbyte*
 JNIEnv_GetByteArrayElements(JNIEnv* p0, jbyteArray p1, jboolean* p2)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetByteArrayElements(%x)\n", p1);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetByteArrayElements(%p)\n", p1);
     return p1;
 }
 
@@ -1587,7 +1594,7 @@ JNIEnv_GetBooleanArrayRegion(JNIEnv* p0, jbooleanArray p1, jsize p2, jsize p3, j
 void
 JNIEnv_GetByteArrayRegion(JNIEnv *env, jbyteArray arrayobj, jsize start, jsize len, jbyte* buf)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetByteArrayRegion(%x, %d, %d, %x)\n", arrayobj, start, len, buf);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetByteArrayRegion(%p, %d, %d, %p)\n", arrayobj, start, len, buf);
     if (arrayobj != GLOBAL_J(env)) {
         struct dummy_byte_array *array = arrayobj;
         //mprotect(buf, len, PROT_WRITE);
@@ -1627,7 +1634,7 @@ JNIEnv_GetLongArrayRegion(JNIEnv* p0, jlongArray p1, jsize p2, jsize p3, jlong* 
 void
 JNIEnv_GetFloatArrayRegion(JNIEnv* p0, jfloatArray p1, jsize p2, jsize p3, jfloat* p4)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetFloatArrayRegion(%x, %d, %d, %x)\n", p1, p2, p3, p4);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetFloatArrayRegion(%p, %d, %d, %p)\n", p1, p2, p3, p4);
 }
 
 
@@ -1705,7 +1712,7 @@ JNIEnv_RegisterNatives(JNIEnv* p0, jclass p1, const JNINativeMethod* p2, jint p3
     int i=0;
     const JNINativeMethod *method = p2;
     while (i<p3) {
-        JNIENV_DEBUG_PRINTF("\tName: %-20s Sig: %-10s Addr: %x\n", method->name, method->signature, method->fnPtr);
+        JNIENV_DEBUG_PRINTF("\tName: %-20s Sig: %-10s Addr: %p\n", method->name, method->signature, method->fnPtr);
         method++;
         i++;
     }
@@ -1841,7 +1848,7 @@ JNIEnv_GetDirectBufferCapacity(JNIEnv* p0, jobject p1)
 const char *
 JNIEnv_GetStringUTFChars(JNIEnv *env, jstring string, jboolean *isCopy)
 {
-    JNIENV_DEBUG_PRINTF("JNIEnv_GetStringUTFChars(%x)\n", string);
+    JNIENV_DEBUG_PRINTF("JNIEnv_GetStringUTFChars(%p)\n", string);
     if (string == GLOBAL_J(env)) {
         JNIENV_DEBUG_PRINTF("WARNING: GetStringUTFChars on global\n");
         return NULL;
@@ -2126,7 +2133,7 @@ JavaVM_DetachCurrentThread(JavaVM *vm)
 jint
 JavaVM_GetEnv(JavaVM *vm, void **env, jint version)
 {
-    JNIENV_DEBUG_PRINTF("JavaVM_GetEnv(%x, %d)\n", env, version);
+    JNIENV_DEBUG_PRINTF("JavaVM_GetEnv(%p, %d)\n", env, version);
     struct GlobalState *global = (*vm)->reserved0;
     *env = ENV(global);
     return 0;
